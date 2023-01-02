@@ -1,0 +1,49 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server:test": "NODE_ENV=test jest --coverage --verbose --silent --detectOpenHandles ./server",
+    "server:test:dev": "npm run server:test -- --watch ./backend",
+    "server:dev": "nodemon",
+    "server:build": "./node_modules/.bin/ts-node build.ts && tsc",
+    "server:start": "node ./dist/src/index.js",
+    "start": "npm run server:build && npm run server:start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-validator": "^6.14.2",
+    "helmet": "^6.0.1",
+    "http-status-codes": "^2.2.0",
+    "jet-logger": "^1.2.6",
+    "morgan": "^1.10.0",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.6.0",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/yamljs": "^0.2.31",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.15",
+    "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^29.2.5",
+    "@types/morgan": "^1.9.3",
+    "@types/supertest": "^2.0.12",
+    "@types/swagger-jsdoc": "^6.0.1",
+    "@types/swagger-ui-express": "^4.1.3",
+    "fs-extra": "^11.1.0",
+    "msw": "^0.49.2",
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.3",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  }
+}
