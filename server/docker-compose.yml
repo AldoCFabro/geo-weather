@@ -1,0 +1,9 @@
+version: '3.5'
+
+services:
+  server:
+    container_name: telecom-challenge
+    restart: always
+    build: .
+    ports: 
+        - "3000:3000"
