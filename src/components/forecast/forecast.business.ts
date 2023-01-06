@@ -1,5 +1,5 @@
 import logger from 'jet-logger';
-import { getLocation } from '../../services/ip-api.servises';
+import { getLocation } from '../../services/ip-api/ip-api.servises';
 
 export async function getForecastBusiness(city = ''): Promise<any> {
   try {

@@ -1,12 +1,13 @@
 import logger from 'jet-logger';
-import { getLocation } from '../../services/ip-api.servises';
-import { IIpApiResponse } from './locations.interface';
+import { getLocation } from '../../services/ip-api/ip-api.servises';
+import { locationDTO } from './locations.dto';
+import { ILocations } from './locations.interface';
 
-export async function getLocationsByIpApiBusiness(): Promise<IIpApiResponse> {
+export async function getLocationsByIpApiBusiness(): Promise<ILocations> {
   try {
     logger.info(`locations.business.getLocationsByIpApiBusiness()`);
     const locations = await getLocation();
-    return locations;
+    return locationDTO(locations);
   } catch (error: any) {
     logger.err(`[Error] locations.business.getLocationsByIpApiBusiness() -> ${error}`);
     throw error;

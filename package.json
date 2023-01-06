@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server:test": "NODE_ENV=test jest --coverage --verbose --silent --detectOpenHandles ./server",
-    "server:test:dev": "npm run server:test -- --watch ./backend",
+    "server:test": "NODE_ENV=test jest --coverage --verbose --silent --detectOpenHandles ./",
+    "server:test:dev": "npm run server:test -- --watch ./",
     "server:dev": "nodemon",
     "server:build": "./node_modules/.bin/ts-node build.ts && tsc",
     "server:start": "node ./dist/src/index.js",

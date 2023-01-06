@@ -1,17 +1,16 @@
-export interface ILocationsResponse {
-  error: boolean;
-  status: number;
-  message: string;
-  data: ILocations;
-}
-
-export interface ILocations {
+export interface IIpApiResponse {
+  status: string;
   country: string;
   countryCode: string;
+  region: string;
   regionName: string;
   city: string;
   zip: string;
   lat: number;
   lon: number;
   timezone: string;
+  isp: string;
+  org: string;
+  as: string;
+  query: string;
 }
