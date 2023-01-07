@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Personal Play challenge
+  title: Personal Pay challenge
   description: |-
     - Este es el desafío para aplicar al cargo "Developer" en TELECOM. El desafío consiste en aplicar habilidades en JavaScript Node.js y TypeScript.
   contact:
@@ -10,14 +10,16 @@ servers:
   - url: http://localhost:3000/api/v1
 tags:
   - name: status
-    description: endpoint to check backend status
+    description: Verificar estado del servidor
+  - name: locations
+    description: Obtiene ubicación por ip
 paths:
   /:
     get:
       tags:
         - status
-      summary: endpoint to check backend status
-      description: Entry point to check server status
+      summary: Verificar estado del servidor
+      description: Endpoint para verificar que el servidor esté levantado
       operationId: statusServer
       responses:
         '200':
@@ -32,27 +34,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponseError'
+  /locations:
+    get:
+      tags:
+        - locations
+      summary: obtener ubicación por ip
+      description: >
+        Para poder utilizar este endpoint es necesario la dirección de ip de cliente que esta consultando en endpoint para así poder obtener su geo-localización del servicio de **https://ip-api.com/**.
+        El cliente que desee consumir este servicio puede consultar su dirección de ip una de estas urls:
+
+        - [ip-api](http://ip-api.com/json/)
+
+        - [cualesmiip](https://www.cualesmiip.com/)
+
+      operationId: statusServer
+      parameters:
+        - examples:
+            IP_VALID:
+              value: 190.183.62.118
+            IP_INVALID:
+              value: 90.183.62.111.2
+            NOT_FOUND:
+              value: 190.183.62.888
+          name: ip
+          description: Dirección de ip del cliente que desea consultar su geo-localización.
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseSuccess'
+        '404':
+          description: Query params es requerido y debe ser una ip v4 valida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError404'
+        '429':
+          description: not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError429'
 components:
   schemas:
-    ApiResponseSuccess:
-      type: object
-      properties:
-        error:
-          type: boolean
-          example: false
-        status:
-          type: integer
-          format: int64
-          example: 200
-        message:
-          type: string
-          example: 'success'
-        body:
-          type: object
-          properties:
-            server:
-              type: string
-              example: 'ok'
     ApiResponseError:
       type: object
       properties:
@@ -66,9 +95,91 @@ components:
         message:
           type: string
           example: 'error'
-        body:
+        data:
           type: object
           properties:
             server:
               type: string
               example: 'fail'
+    ApiResponseSuccess:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          format: int64
+          example: 200
+        message:
+          type: string
+          example: 'OK'
+        data:
+          type: object
+          properties:
+            country:
+              type: string
+              example: 'Argentina'
+            countryCode:
+              type: string
+              example: 'AR'
+            regionName:
+              type: string
+              example: 'Corrientes'
+            city:
+              type: string
+              example: 'Goya'
+            zip:
+              type: string
+              example: '3450'
+            lat:
+              type: string
+              example: -29.2409
+            lon:
+              type: string
+              example: -59.095
+            timezone:
+              type: string
+              example: 'America/Argentina/Cordoba'
+    ApiResponseError404:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        status:
+          type: integer
+          format: int64
+          example: 404
+        message:
+          type: string
+          example: 'Bad Request'
+        data:
+          type: array
+          items:
+            type: string
+            oneOf:
+              - $ref: '#/components/schemas/ipIsRequired'
+              - $ref: '#/components/schemas/mustBeAnIpv4'
+    ipIsRequired:
+      type: string
+      example: 'locations.ip.is-required'
+    mustBeAnIpv4:
+      type: string
+      example: 'locations.ip.must-be-an-ipv4'
+    ApiResponseError429:
+      type: object
+      properties:
+        error:
+          type: boolean
+          example: true
+        status:
+          type: integer
+          format: int64
+          example: 429
+        message:
+          type: string
+          example: 'locations.too-many-requests'
+        data:
+          type: object
+          example: {}
