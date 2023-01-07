@@ -1,5 +1,5 @@
 const { query } = require('express-validator');
-import { ERROR_INPUT_API } from '../../utils/error-api';
+import { ERROR_INPUT_API } from './error-api';
 
 export const forecastsValidator = [
   query('city')
@@ -9,7 +9,7 @@ export const forecastsValidator = [
       const pattern = new RegExp('^[a-zA-Z ]+$');
       return pattern.test(city);
     })
-    .withMessage(ERROR_INPUT_API.isString)
+    .withMessage(ERROR_INPUT_API.forecast.isString)
     .bail()
     .trim(),
 ];

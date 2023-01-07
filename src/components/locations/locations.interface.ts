@@ -1,8 +1,9 @@
-export interface ILocationsResponse {
-  error: boolean;
-  status: number;
-  message: string;
-  data: ILocations;
+import { Request } from 'express';
+
+export interface RequestLocations extends Request {
+  query: {
+    ip: string;
+  };
 }
 
 export interface ILocations {
@@ -14,4 +15,11 @@ export interface ILocations {
   lat: number;
   lon: number;
   timezone: string;
+}
+
+export interface ILocationsResponse {
+  error: boolean;
+  status: number;
+  message: string;
+  data: ILocations | string[];
 }
