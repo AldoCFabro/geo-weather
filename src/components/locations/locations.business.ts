@@ -1,12 +1,12 @@
 import logger from 'jet-logger';
 import { isObjectEmpty } from '../../helpers/common';
-import { getLocation } from '../../services/ip-api/ip-api.services';
+import { getLocationByIp } from '../../services/ip-api/ip-api.services';
 import { ILocations } from './locations.interface';
 
 export async function getLocationsByIpApiBusiness(ip: string): Promise<ILocations> {
   try {
     logger.info(`locations.business.getLocationsByIpApiBusiness(${ip})`);
-    const location = await getLocation(ip);
+    const location = await getLocationByIp(ip);
     if (isObjectEmpty(location)) {
       logger.info(`services.ip-api.locations-not-found`);
       throw 'locations.not-found';

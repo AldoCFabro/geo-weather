@@ -3,6 +3,8 @@ import request from 'supertest';
 import { prefix } from '../../src/app';
 import server from '../../src';
 
+// agregar error 401 cuando no se envia o se envía un appid erroneo
+
 describe(`[GET] ${prefix}/ Verify that the server is up`, () => {
   const api = request(app);
   afterEach(() => {

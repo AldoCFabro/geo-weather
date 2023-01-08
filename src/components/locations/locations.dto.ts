@@ -1,18 +1,7 @@
-import { IIpApiResponse } from '../../services/ip-api/ip-api.interfaces';
+import { ILocationDTO } from '../../common/interfaces';
 import { ILocations } from './locations.interface';
 
-/* export const locationDTO = (locationApiRes: IIpApiResponse): ILocations => {
-  const { country, countryCode, regionName, zip, city, lat, lon, timezone } = locationApiRes;
-
-  return {
-    country,
-    countryCode,
-    regionName,
-    city,
-    zip,
-    lat,
-    lon,
-    timezone,
-  };
+export const fromILocationsToLocationDTO = (params: ILocations): ILocationDTO => {
+  const { lat, lon, countryCode, regionName, city } = params;
+  return { lat, lon, countryCode, regionName, city };
 };
- */

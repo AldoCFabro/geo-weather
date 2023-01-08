@@ -4,5 +4,6 @@ export interface RequestForecasts extends Request {
   query: {
     city?: string;
     ip?: string;
+    country?: string;
   };
 }

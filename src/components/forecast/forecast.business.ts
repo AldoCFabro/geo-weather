@@ -1,44 +1,37 @@
 import logger from 'jet-logger';
-import { getLocation } from '../../services/ip-api/ip-api.services';
+import { latLogDTO } from '../../common/dtos';
+import { ILocationDTO } from '../../common/interfaces';
+import { getLocationByIp } from '../../services/ip-api/ip-api.services';
+import { getGeolocationByCity } from '../../services/openweather/geo/openweather-geo.service';
+import { IOpenWeatherWeather } from '../../services/openweather/weather/weather.interfaces';
+import { getWeather } from '../../services/openweather/weather/weather.service';
+import { fromILocationsToLocationDTO } from '../locations/locations.dto';
 import { ERROR_INPUT_API } from './error-api';
+import { fromIOpenWeatherGeoFromLocationDTO } from './forecast.dto';
 
-export async function getForecastAndLocation(city = '', ip = ''): Promise<any> {
+export async function getWeatherAndLocation(
+  city = '',
+  ip = '',
+  country?: string,
+): Promise<{ weather: IOpenWeatherWeather; location: ILocationDTO }> {
   try {
-    logger.info(`forecast.business.getForecastAndLocation(${city})`);
+    logger.info(
+      `forecast.business.getWeatherAndLocation(city=${city}),ip=${ip},country=${country}`,
+    );
     checkInputParams(city, ip);
-    let response;
+    let location;
     if (city) {
-      response = await getForecastByCity(city);
+      const res = await getGeolocationByCity(city, country);
+      location = fromIOpenWeatherGeoFromLocationDTO(res);
     } else {
-      response = await getForecastByIpApi(ip);
+      const res = await getLocationByIp(ip);
+      location = fromILocationsToLocationDTO(res);
     }
-    return response;
+    const { lat, lon } = latLogDTO(location);
+    const weather = await getWeather(lat, lon);
+    return { weather, location };
   } catch (error: any) {
-    logger.err(`[Error] forecast.business.getForecastAndLocation(${city}) -> ${error}`);
-    throw error;
-  }
-}
-
-export async function getForecastByCity(city = ''): Promise<any> {
-  try {
-    logger.info(`forecast.business.getForecastByCity(${city})`);
-    // llamar al servicio del clima
-    return city;
-  } catch (error: any) {
-    logger.err(`[Error] forecast.business.getForecastByCity(${city}) -> ${error}`);
-    throw error;
-  }
-}
-
-export async function getForecastByIpApi(ip: string): Promise<any> {
-  try {
-    logger.info(`forecast.business.getForecastByIpApi()`);
-    // llamar al servicio del clima
-    const locations = await getLocation('');
-    // llamar al servicio del clima
-    return locations;
-  } catch (error: any) {
-    logger.err(`[Error] forecast.business.getForecastBusiness() -> ${error}`);
+    logger.err(`[Error] forecast.business.getWeatherAndLocation(${city}) -> ${error}`);
     throw error;
   }
 }
