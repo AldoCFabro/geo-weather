@@ -3,6 +3,10 @@ import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 const knownBugs: any = {
   'locations.not-found': { message: 'locations.not-found', status: 404 },
   'locations.too-many-requests': { message: 'locations.too-many-requests', status: 429 },
+  'locations.it-is-required-to-send-city-or-ip': {
+    message: 'locations.it-is-required-to-send-city-or-ip',
+    status: 400,
+  },
 };
 
 export const handlerError = (errs: string): { message: string; status: number } => {

@@ -1,15 +1,23 @@
-const { query } = require('express-validator');
+import { query } from 'express-validator';
+import { isIp, isString } from '../../helpers/common';
 import { ERROR_INPUT_API } from './error-api';
 
 export const forecastsValidator = [
   query('city')
     .optional()
-    .isString()
+    .trim()
     .custom((city: any) => {
-      const pattern = new RegExp('^[a-zA-Z ]+$');
-      return pattern.test(city);
+      return isString(city);
     })
     .withMessage(ERROR_INPUT_API.forecast.isString)
-    .bail()
-    .trim(),
+    .bail(),
+  query('ip')
+    .optional()
+    .isString()
+    .trim()
+    .custom((ip: string) => {
+      return isIp(ip);
+    })
+    .withMessage(ERROR_INPUT_API.forecast.isIp)
+    .bail(),
 ];
