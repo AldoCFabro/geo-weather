@@ -1,3 +1,6 @@
+// Las claves e información sensible no debería estar acá, solo esta para que puedan correr esta prueba
+// pero en prod se deberían dejar solo las lecturas de los process.env.
+
 export const configApp = {
   api: {
     port: process.env.API_PORT || 3000,

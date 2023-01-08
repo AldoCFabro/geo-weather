@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { successResponse, errorResponse } from '../../network/response';
 import logger from 'jet-logger';
 import { RequestForecasts } from './forecasts.interface';
-import { getWeatherAndLocation } from './forecast.business';
+import { getWeatherAndLocation, getForecastAndLocation } from './forecast.business';
 import { handlerError } from '../../helpers/handler-errors';
 
 export async function getCurrentForecastController(req: Request, res: Response) {
@@ -24,7 +24,7 @@ export async function getExtendedForecastsController(req: Request, res: Response
     logger.info(`forecasts.controller.getExtendedForecastsController()`);
     const customReq = req as RequestForecasts;
     const { city = '', ip = '' } = customReq.query;
-    const response = await getWeatherAndLocation(city, ip);
+    const response = await getForecastAndLocation(city, ip);
     successResponse({ req, res, data: response });
   } catch (error: any) {
     logger.err(`[ERROR] forecasts.controller.getExtendedForecastsController() -> ${error}`);

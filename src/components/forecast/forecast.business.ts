@@ -1,7 +1,9 @@
 import logger from 'jet-logger';
-import { latLogDTO } from '../../common/dtos';
-import { ILocationDTO } from '../../common/interfaces';
+import { getLatLonFromLocation } from '../../helpers/common';
+import { ILocationDTO } from '../../helpers/interfaces';
 import { getLocationByIp } from '../../services/ip-api/ip-api.services';
+import { IOpenWeatherForecast } from '../../services/openweather/forecast/forecast.interfaces';
+import { getForecast } from '../../services/openweather/forecast/forecast.service';
 import { getGeolocationByCity } from '../../services/openweather/geo/openweather-geo.service';
 import { IOpenWeatherWeather } from '../../services/openweather/weather/weather.interfaces';
 import { getWeather } from '../../services/openweather/weather/weather.service';
@@ -19,15 +21,8 @@ export async function getWeatherAndLocation(
       `forecast.business.getWeatherAndLocation(city=${city}),ip=${ip},country=${country}`,
     );
     checkInputParams(city, ip);
-    let location;
-    if (city) {
-      const res = await getGeolocationByCity(city, country);
-      location = fromIOpenWeatherGeoFromLocationDTO(res);
-    } else {
-      const res = await getLocationByIp(ip);
-      location = fromILocationsToLocationDTO(res);
-    }
-    const { lat, lon } = latLogDTO(location);
+    const location = await getLocation(city, ip, country);
+    const { lat, lon } = getLatLonFromLocation(location);
     const weather = await getWeather(lat, lon);
     return { weather, location };
   } catch (error: any) {
@@ -36,7 +31,45 @@ export async function getWeatherAndLocation(
   }
 }
 
-export function checkInputParams(city: string, ip: string): boolean {
+export async function getForecastAndLocation(
+  city = '',
+  ip = '',
+  country?: string,
+): Promise<{ forecast: IOpenWeatherForecast; location: ILocationDTO }> {
+  try {
+    logger.info(
+      `forecast.business.getForecastAndLocation(city=${city}),ip=${ip},country=${country}`,
+    );
+    checkInputParams(city, ip);
+    const location = await getLocation(city, ip, country);
+    const { lat, lon } = getLatLonFromLocation(location);
+    const forecast = await getForecast(lat, lon);
+    return { forecast, location };
+  } catch (error: any) {
+    logger.err(`[Error] forecast.business.getForecastAndLocation(${city}) -> ${error}`);
+    throw error;
+  }
+}
+
+async function getLocation(city: string, ip: string, country?: string): Promise<ILocationDTO> {
+  try {
+    logger.info(`forecast.business.getLocation(city=${city},ip=${ip},country)${country})`);
+    let location;
+    if (city) {
+      const res = await getGeolocationByCity(city, country);
+      location = fromIOpenWeatherGeoFromLocationDTO(res);
+    } else {
+      const res = await getLocationByIp(ip);
+      location = fromILocationsToLocationDTO(res);
+    }
+    return location;
+  } catch (error: any) {
+    logger.err(`[Error] forecast.business.getLocation() -> ${error}`);
+    throw error;
+  }
+}
+
+function checkInputParams(city: string, ip: string): boolean {
   try {
     logger.info(`forecast.business.checkInputParams(${city},${ip})`);
     if (!city && !ip) {

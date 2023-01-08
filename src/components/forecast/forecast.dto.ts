@@ -1,4 +1,4 @@
-import { ILocationDTO } from '../../common/interfaces';
+import { ILocationDTO } from '../../helpers/interfaces';
 import { IOpenWeatherGeo } from '../../services/openweather/geo/openweather-geo.interfaces';
 
 export const fromIOpenWeatherGeoFromLocationDTO = (params: IOpenWeatherGeo): ILocationDTO => {
