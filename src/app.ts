@@ -26,19 +26,6 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(`${prefix}/doc`, swaggerUI.serve, swaggerUI.setup(swaggerJsDoc));
-app.use(`${prefix}/home`, (req, res, next) => {
-  const options = {
-    root: path.join(__dirname, 'public'),
-  };
-  var fileName = 'index.html';
-  res.sendFile(fileName, options, function (err) {
-    if (err) {
-      next(err);
-    } else {
-      console.log('Sent:', fileName);
-    }
-  });
-});
 
 logger.info(`server running in environment ${process.env.NODE_ENV}`);
 if (process.env.NODE_ENV === 'local') {

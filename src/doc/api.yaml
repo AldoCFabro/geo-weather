@@ -4,7 +4,10 @@ info:
   description: |-
     - Este es el desafío para aplicar al cargo "Developer" en TELECOM. El desafío consiste en aplicar habilidades en JavaScript Node.js y TypeScript.
   contact:
+    name: Aldo Cesar Fabro
     email: aldocfabro@gmail.com
+    url: https://www.linkedin.com/in/aldo-fabro-480692181/
+
   version: 0.0.1
 servers:
   - url: http://localhost:3000/api/v1
