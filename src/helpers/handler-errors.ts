@@ -1,11 +1,19 @@
 import { StatusCodes, ReasonPhrases } from 'http-status-codes';
+import { ERROR_RESPONSE_API } from '../components/forecast/error-api';
 
 const knownBugs: any = {
-  'locations.not-found': { message: 'locations.not-found', status: 404 },
-  'locations.too-many-requests': { message: 'locations.too-many-requests', status: 429 },
+  'locations.not-found': { message: 'locations.not-found', status: StatusCodes.NOT_FOUND },
+  'locations.too-many-requests': {
+    message: 'locations.too-many-requests',
+    status: StatusCodes.TOO_MANY_REQUESTS,
+  },
   'locations.it-is-required-to-send-city-or-ip': {
     message: 'locations.it-is-required-to-send-city-or-ip',
-    status: 400,
+    status: StatusCodes.BAD_REQUEST,
+  },
+  'forecast.city.not-found': {
+    message: ERROR_RESPONSE_API.forecast.cityNotFound,
+    status: StatusCodes.NOT_FOUND,
   },
 };
 

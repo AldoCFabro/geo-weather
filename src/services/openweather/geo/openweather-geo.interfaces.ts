@@ -8,3 +8,7 @@ export interface IOpenWeatherGeo {
   country: string;
   state: string;
 }
+export interface IOpenWeatherGeoError {
+  cod: string;
+  message: string;
+}

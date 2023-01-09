@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { IP_PARAMS } from '../events/ip-api-params';
-import { successResponseMocks } from '../services-responses/ip-api/get-ip-api';
+import { successResponseMocks } from '../responses-services-external/ip-api/get-ip-api';
 export const handlers = [
   rest.get(`http://ip-api.com/json/${IP_PARAMS.VALID.ip}`, async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(successResponseMocks));

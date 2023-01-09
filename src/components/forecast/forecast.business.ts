@@ -8,7 +8,7 @@ import { getGeolocationByCity } from '../../services/openweather/geo/openweather
 import { IOpenWeatherWeather } from '../../services/openweather/weather/weather.interfaces';
 import { getWeather } from '../../services/openweather/weather/weather.service';
 import { fromILocationsToLocationDTO } from '../locations/locations.dto';
-import { ERROR_INPUT_API } from './error-api';
+import { ERROR_INPUT_API, ERROR_RESPONSE_API } from './error-api';
 import { fromIOpenWeatherGeoFromLocationDTO } from './forecast.dto';
 
 export async function getWeatherAndLocation(
@@ -57,15 +57,24 @@ async function getLocation(city: string, ip: string, country?: string): Promise<
     let location;
     if (city) {
       const res = await getGeolocationByCity(city, country);
+      checkLocation(res);
       location = fromIOpenWeatherGeoFromLocationDTO(res);
     } else {
       const res = await getLocationByIp(ip);
+      checkLocation(res);
       location = fromILocationsToLocationDTO(res);
     }
+
     return location;
   } catch (error: any) {
     logger.err(`[Error] forecast.business.getLocation() -> ${error}`);
     throw error;
+  }
+}
+
+function checkLocation(location: any): void {
+  if (!location) {
+    throw ERROR_RESPONSE_API.forecast.cityNotFound;
   }
 }
 
