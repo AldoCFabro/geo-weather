@@ -10,15 +10,19 @@ servers:
   - url: http://localhost:3000/api/v1
 tags:
   - name: status
-    description: Verificar estado del servidor
+    description: Verificar estado del servidor.
   - name: locations
-    description: Obtiene ubicación por ip
+    description: Obtiene ubicación por ip.
+  - name: forecast-current
+    description: Obtener el clima actual y la ubicación.
+  - name: forecast
+    description: Obtener pronostico de los próximos 5 días y la ubicación.
 paths:
   /:
     get:
       tags:
         - status
-      summary: Verificar estado del servidor
+      summary: verificar estado del servidor
       description: Endpoint para verificar que el servidor esté levantado
       operationId: statusServer
       responses:
@@ -47,7 +51,7 @@ paths:
 
         - [cualesmiip](https://www.cualesmiip.com/)
 
-      operationId: statusServer
+      operationId: locations
       parameters:
         - examples:
             IP_VALID:
@@ -80,6 +84,133 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponseError429'
+  /forecast/current:
+    get:
+      tags:
+        - forecast-current
+      summary: obtener el clima actual y la ubicación.
+      description: >
+        Para poder obtener el clima actual es necesario enviar una ciudad o en su defecto la ip del
+        cliente que esta realizando la consulta. Actualmente solo se puede obtener el clima de Argentina.
+        El cliente que desee consumir este servicio puede consultar su dirección de ip una de estas urls:
+
+        - [ip-api](http://ip-api.com/json/)
+
+        - [cualesmiip](https://www.cualesmiip.com/)
+
+      operationId: forecast
+      parameters:
+        - examples:
+            VALID_CITY:
+              value: Goya
+            NOT_FOUND_CITY:
+              value: Goyagoya
+            INVALID_CITY:
+              value: 123
+            EMPTY_CITY:
+              value:
+          name: city
+          description: Es necesario enviar una ciudad o una ip para poder obtener el clima actual
+          schema:
+            type: string
+          in: query
+        - examples:
+            VALID_IP:
+              value: 190.183.62.118
+            INVALID_IP:
+              value: 90.183.62.111.e
+            NOT_FOUND_IP:
+              value: 190.183.62.888
+            EMPTY_IP:
+              value:
+          name: ip
+          description: Es necesario enviar una ciudad o una ip para poder obtener el clima actual
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forecastCurrentResponseSuccess'
+        '400':
+          description: Query params es requerido y debe ser el nombre de una ciudad Argentina o una ip v4
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forecastCurrentResponseError400'
+        '404':
+          description: Ciudad no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forecastCurrentResponseError404'
+  /forecast:
+    get:
+      tags:
+        - forecast
+      summary: obtener pronostico de los próximos 5 días y la ubicación
+      description: >
+        Para poder obtener el clima actual es necesario enviar una ciudad o en su defecto la ip del
+        cliente que esta realizando la consulta. Actualmente solo se puede obtener el clima de Argentina.
+        El cliente que desee consumir este servicio puede consultar su dirección de ip una de estas urls:
+
+        - [ip-api](http://ip-api.com/json/)
+
+        - [cualesmiip](https://www.cualesmiip.com/)
+
+      operationId: forecast
+      parameters:
+        - examples:
+            VALID_CITY:
+              value: Goya
+            NOT_FOUND_CITY:
+              value: Goyagoya
+            INVALID_CITY:
+              value: 123
+            EMPTY_CITY:
+              value:
+          name: city
+          description: Es necesario enviar una ciudad o una ip para poder obtener el clima actual
+          schema:
+            type: string
+          in: query
+        - examples:
+            VALID_IP:
+              value: 190.183.62.118
+            INVALID_IP:
+              value: 90.183.62.111.e
+            NOT_FOUND_IP:
+              value: 190.183.62.888
+            EMPTY_IP:
+              value:
+          name: ip
+          description: Es necesario enviar una ciudad o una ip para poder obtener el clima actual
+          schema:
+            type: string
+          in: query
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forecastResponseSuccess'
+        '400':
+          description: Query params es requerido y debe ser el nombre de una ciudad Argentina o una ip v4
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forecastCurrentResponseError400'
+        '404':
+          description: Ciudad no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/forecastCurrentResponseError404'
+
 components:
   schemas:
     ApiResponseError:
@@ -183,3 +314,346 @@ components:
         data:
           type: object
           example: {}
+    forecastCurrentResponseSuccess:
+      type: object
+      properties:
+        error:
+          type: boolean
+        status:
+          type: number
+          example: 200
+        message:
+          type: string
+          example: OK
+        data:
+          type: object
+          properties:
+            weather:
+              type: object
+              properties:
+                coord:
+                  type: object
+                  properties:
+                    lon:
+                      type: number
+                      example: -59.265
+                    lat:
+                      type: number
+                      example: -29.1444
+                weather:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 803
+                      main:
+                        type: string
+                        example: Clouds
+                      description:
+                        type: string
+                        example: broken clouds
+                      icon:
+                        type: string
+                        example: 04n
+                base:
+                  type: string
+                  example: stations
+                main:
+                  type: object
+                  properties:
+                    temp:
+                      type: number
+                      example: 297.56
+                    feels_like:
+                      type: number
+                      example: 296.97
+                    temp_min:
+                      type: number
+                      example: 297.56
+                    temp_max:
+                      type: number
+                      example: 297.56
+                    pressure:
+                      type: number
+                      example: 1012
+                    humidity:
+                      type: number
+                      example: 35
+                    sea_level:
+                      type: number
+                      example: 1012
+                    grnd_level:
+                      type: number
+                      example: 1007
+                visibility:
+                  type: number
+                  example: 10000
+                wind:
+                  type: object
+                  properties:
+                    speed:
+                      type: number
+                      example: 2.75
+                    deg:
+                      type: number
+                      example: 113
+                    gust:
+                      type: number
+                      example: 6.46
+                clouds:
+                  type: object
+                  properties:
+                    all:
+                      type: number
+                      example: 79
+                dt:
+                  type: number
+                  example: 1673234888
+                sys:
+                  type: object
+                  properties:
+                    country:
+                      type: string
+                      example: AR
+                    sunrise:
+                      type: number
+                      example: 1673255234
+                    sunset:
+                      type: number
+                      example: 1673305229
+                timezone:
+                  type: number
+                  example: -10800
+                id:
+                  type: number
+                  example: 3433715
+                name:
+                  type: string
+                  example: Goya
+                cod:
+                  type: number
+                  example: 200
+            location:
+              type: object
+              properties:
+                lat:
+                  type: number
+                  example: -29.1444046
+                lon:
+                  type: number
+                  example: -59.2649825
+                countryCode:
+                  type: string
+                  example: AR
+                regionName:
+                  type: string
+                  example: Corrientes
+                city:
+                  type: string
+                  example: Municipio de Goya
+    forecastCurrentResponseError400:
+      type: object
+      properties:
+        error:
+          type: boolean
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+          example: Bad Request
+        data:
+          type: array
+          items:
+            type: string
+            oneOf:
+              - $ref: '#/components/schemas/must-be-a-string'
+              - $ref: '#/components/schemas/mustBeAnIpv4'
+              - $ref: '#/components/schemas/not-city-or-ip'
+    must-be-a-string:
+      type: string
+      example: 'forecast.city.must-be-a-string'
+    not-city-or-ip:
+      type: string
+      example: 'locations.it-is-required-to-send-city-or-ip'
+    forecastCurrentResponseError404:
+      type: object
+      properties:
+        error:
+          type: boolean
+        status:
+          type: number
+          example: 404
+        message:
+          type: string
+          example: forecast.city.not-found
+        data:
+          type: object
+          example: {}
+    forecastResponseSuccess:
+      type: object
+      properties:
+        error:
+          type: boolean
+        status:
+          type: number
+          example: 200
+        message:
+          type: string
+          example: OK
+        data:
+          type: object
+          properties:
+            forecast:
+              type: object
+              properties:
+                cod:
+                  type: string
+                  example: 200
+            message:
+              type: number
+              example: 0
+            cnt:
+              type: number
+              example: 5
+            list:
+              type: array
+              items:
+                type: object
+                properties:
+                  dt:
+                    type: number
+                    example: 1673244000
+                  main:
+                    type: object
+                    properties:
+                      temp:
+                        type: number
+                        example: 296.86
+                      feels_like:
+                        type: number
+                        example: 296.25
+                      temp_min:
+                        type: number
+                        example: 295.45
+                      temp_max:
+                        type: number
+                        example: 296.86
+                      pressure:
+                        type: number
+                        example: 1012
+                      sea_level:
+                        type: number
+                        example: 1012
+                      grnd_level:
+                        type: number
+                        example: 1006
+                      humidity:
+                        type: number
+                        example: 37
+                      temp_kf:
+                        type: number
+                        example: 1.41
+                  weather:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 803
+                        main:
+                          type: string
+                          example: Clouds
+                        description:
+                          type: string
+                          example: broken clouds
+                        icon:
+                          type: string
+                          example: 04n
+                  clouds:
+                    type: object
+                    properties:
+                      all:
+                        type: number
+                        example: 67
+                  wind:
+                    type: object
+                    properties:
+                      speed:
+                        type: number
+                        example: 2.43
+                      deg:
+                        type: number
+                        example: 91
+                      gust:
+                        type: number
+                        example: 5.07
+                  visibility:
+                    type: number
+                    example: 10000
+                  pop:
+                    type: number
+                    example: 0
+                  sys:
+                    type: object
+                    properties:
+                      pod:
+                        type: string
+                        example: n
+                  dt_txt:
+                    type: string
+                    example: 2023-01-09 06:00:00
+            city:
+              type: object
+              properties:
+                id:
+                  type: number
+                  example: 3433715
+                name:
+                  type: string
+                  example: Goya
+                coord:
+                  type: object
+                  properties:
+                    lat:
+                      type: number
+                      example: -29.1444
+                    lon:
+                      type: number
+                      example: -59.265
+                country:
+                  type: string
+                  example: AR
+                population:
+                  type: number
+                  example: 70245
+                timezone:
+                  type: number
+                  example: -10800
+                sunrise:
+                  type: number
+                  example: 1673255234
+                sunset:
+                  type: number
+                  example: 1673305229
+        location:
+          type: object
+          properties:
+            lat:
+              type: number
+              example: -29.1444046
+            lon:
+              type: number
+              example: -59.2649825
+            countryCode:
+              type: string
+              example: AR
+            regionName:
+              type: string
+              example: Corrientes
+            city:
+              type: string
+              example: Municipio de Goya
