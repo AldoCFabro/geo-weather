@@ -47,7 +47,7 @@ describe(`[GET] ${prefix}/forecast get Weather And Location with city`, () => {
     expect(response.body).toHaveProperty('data', [ERROR_INPUT_API.forecast.isIp]);
   });
 
-  test('4 - it should return a 400 error for sending an invalid city', async () => {
+  test('4 - should return a 404 error for not finding the city', async () => {
     const response = await api
       .get(`${prefix}/forecast`)
       .query(INPUT_QUERY_PARAMS.NOT_FOUND_CITY)
@@ -67,7 +67,7 @@ describe(`[GET] ${prefix}/forecast get Weather And Location with city`, () => {
     expect(response.body).toHaveProperty('error', false);
     expect(response.body).toHaveProperty('message');
     expect(response.body).toHaveProperty('data');
-    expect(response.body.data).toHaveProperty('weather');
+    expect(response.body.data).toHaveProperty('forecast');
     expect(response.body.data).toHaveProperty('location');
   });
 

@@ -9,7 +9,10 @@
     "server:dev": "nodemon",
     "server:build": "./node_modules/.bin/ts-node build.ts && tsc",
     "server:start": "node ./dist/src/index.js",
-    "start": "npm run server:build && npm run server:start"
+    "start": "npm run server:build && npm run server:start",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up",
+    "docker:run": "npm run docker:build && npm run docker:up"
   },
   "author": "",
   "license": "ISC",
